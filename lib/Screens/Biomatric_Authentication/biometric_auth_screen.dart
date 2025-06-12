@@ -10,7 +10,7 @@ class BiometricAuthScreen extends StatefulWidget {
   _BiometricAuthScreenState createState() => _BiometricAuthScreenState();
 }
 
-class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
+class _BiometricAuthScreenState extends State<BiometricAuthScreen> with WidgetsBindingObserver {
   final LocalAuthentication auth = LocalAuthentication();
   bool _isBiometricAvailable = false;
   bool _isAuthenticating = false;
@@ -19,14 +19,31 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkBiometrics();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App has come to foreground, trigger authentication
+      if (!_isAuthenticating) {
+        _checkBiometrics();
+      }
+    }
   }
 
   Future<void> _checkBiometrics() async {
     try {
       final canCheckBiometrics = await auth.canCheckBiometrics;
       final availableBiometrics = await auth.getAvailableBiometrics();
-
+      
       setState(() {
         _isBiometricAvailable = canCheckBiometrics && availableBiometrics.isNotEmpty;
       });

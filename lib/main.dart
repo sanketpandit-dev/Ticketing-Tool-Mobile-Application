@@ -10,8 +10,8 @@ import 'package:tickteting_tool/Controller/TicketSubtypeController.dart';
 import 'package:tickteting_tool/Controller/PriorityController.dart';
 import 'package:tickteting_tool/Controller/TicketController.dart';
 import 'package:tickteting_tool/Screens/Biomatric_Authentication/auth_provider.dart';
-import 'package:tickteting_tool/Screens/Biomatric_Authentication/biometric_auth_screen.dart';
- import 'package:tickteting_tool/Screens/Splashscreen.dart';
+import 'package:tickteting_tool/biometric_gate.dart';
+import 'package:tickteting_tool/Screens/Splashscreen.dart';
 
 void main() {
   runApp(
@@ -37,18 +37,19 @@ void main() {
           create: (_) => TicketController(),
         ),
         ChangeNotifierProvider(create: (context) => TicketSubmissionController()),
-
         ChangeNotifierProvider(create: (_) => Resolvedticketscheckcontroller()),
         ChangeNotifierProvider(create: (_) => TicketCountController()),
       ],
-      child: MaterialApp(
-        title: 'Ticketing Tool',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      child: BiometricGate(
+        child: MaterialApp(
+          title: 'Ticketing Tool',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: SplashScreen(),
+          debugShowCheckedModeBanner: false,
         ),
-        home:  BiometricAuthScreen(),
-        debugShowCheckedModeBanner: false,
       ),
     ),
   );
